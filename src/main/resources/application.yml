@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mc
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    hikari:
+      idle-timeout: 10000
+      maximum-pool-size: 5
+      minimum-idle: 1
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  jwt:
+    secret: 7a514562f44347859490475d2e71cb1c

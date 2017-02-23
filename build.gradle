@@ -2,13 +2,27 @@ group 'com.mc'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'application'
 
-sourceCompatibility = 1.5
+mainClassName = 'com.mc.App'
+
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.+'
+
+    // database access
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.+'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.+'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.+'
+
+    // dependencies for authentication with JSON web token
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.+'
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.+'
+
+    compile group: 'org.mockito', name: 'mockito-all', version: '1.+'
 }
