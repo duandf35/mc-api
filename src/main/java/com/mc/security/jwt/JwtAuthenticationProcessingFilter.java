@@ -21,14 +21,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * Authenticate user against JWT access token.
+ *
  * @author Wenyu
  * @since 2/18/17
  */
-public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class JwtAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
     private final AuthenticationFailureHandler failureHandler;
 
-    public JwtTokenAuthenticationProcessingFilter(AuthenticationFailureHandler failureHandler, RequestMatcher matcher) {
+    public JwtAuthenticationProcessingFilter(AuthenticationFailureHandler failureHandler, RequestMatcher matcher) {
         super(matcher);
         this.failureHandler = failureHandler;
     }

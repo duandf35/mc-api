@@ -6,7 +6,7 @@ import com.mc.security.login.LoginAuthenticationSuccessHandler;
 import com.mc.security.login.LoginProcessingFilter;
 import com.mc.security.jwt.JwtAuthenticationProvider;
 import com.mc.security.jwt.JwtAuthenticationRequestMatcher;
-import com.mc.security.jwt.JwtTokenAuthenticationProcessingFilter;
+import com.mc.security.jwt.JwtAuthenticationProcessingFilter;
 import com.mc.security.user.DbUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +87,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
+    protected JwtAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
         List<String> pathToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
         JwtAuthenticationRequestMatcher requestMatcher = new JwtAuthenticationRequestMatcher(pathToSkip, TOKEN_BASED_AUTH_ENTRY_POINT);
 
-        JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(loginAuthenticationFailureHandler, requestMatcher);
+        JwtAuthenticationProcessingFilter filter = new JwtAuthenticationProcessingFilter(loginAuthenticationFailureHandler, requestMatcher);
 
         filter.setAuthenticationManager(authenticationManagerBean());
         return filter;

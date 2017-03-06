@@ -1,6 +1,7 @@
 package com.mc.account.models;
 
 import org.hibernate.validator.constraints.Email;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+
+import java.util.Date;
 
 /**
  * @author Wenyu
@@ -35,6 +38,10 @@ public class User {
     private UserRole role;
 
     private boolean enabled;
+
+    @DateTimeFormat
+    @NotNull
+    private Date dateCreated;
 
     public User() {
 

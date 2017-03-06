@@ -15,13 +15,4 @@ public class JwtRefreshToken {
     public String value() {
         return value;
     }
-
-    /**
-     * The JTI should be one-time for preventing replay attack.
-     *
-     * @return
-     */
-//    public String getJti() {
-//
-//    }
 }
