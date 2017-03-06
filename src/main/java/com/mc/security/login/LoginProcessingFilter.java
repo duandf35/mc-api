@@ -1,6 +1,7 @@
 package com.mc.security.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mc.security.utils.WebUtils;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -95,18 +96,8 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
         isSupport = HttpMethod.POST.name().equals(request.getMethod());
 
         // only allow Ajax request
-        isSupport &= isAjax(request);
+        isSupport &= WebUtils.isAjax(request);
 
         return isSupport;
-    }
-
-    // http://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
-    // | Without CORS it is not possible to add X-Requested-With to a cross domain XHR request.
-    private static final String AJAX_HEADER_KEY = "X-Requested-With";
-
-    private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
-
-    private static boolean isAjax(HttpServletRequest request) {
-        return request.getHeader(AJAX_HEADER_KEY).contains(AJAX_HEADER_VALUE);
     }
 }

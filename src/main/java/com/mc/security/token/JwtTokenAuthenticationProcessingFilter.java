@@ -1,5 +1,7 @@
 package com.mc.security.token;
 
+import static com.mc.security.utils.WebUtils.JWT_TOKEN_HEADER_PARAM;
+
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -22,8 +24,6 @@ import java.io.IOException;
  * @since 2/18/17
  */
 public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
-
-    private static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
 
     private final AuthenticationFailureHandler failureHandler;
 
