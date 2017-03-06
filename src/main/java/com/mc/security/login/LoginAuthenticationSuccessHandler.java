@@ -3,6 +3,7 @@ package com.mc.security.login;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mc.security.token.JwtToken;
 import com.mc.security.token.JwtTokenFactory;
+import com.mc.security.user.DbUserAuthority;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,10 +49,10 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         // Note: the authentication object here suppose to be the UsernamePasswordAuthenticationToken
         // which is created in the LoginAuthenticationProvider
         String username = (String) authentication.getPrincipal();
-        Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) authentication.getAuthorities();
+        Collection<DbUserAuthority> authorities = (Collection<DbUserAuthority>) authentication.getAuthorities();
 
         JwtToken accessToken = jwtTokenFactory.createAccessToken(username, authorities);
-        JwtToken refreshToken = jwtTokenFactory.createRefreshToken(username, authorities);
+        JwtToken refreshToken = jwtTokenFactory.createRefreshToken(username);
 
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put(TOKEN, accessToken.getToken());

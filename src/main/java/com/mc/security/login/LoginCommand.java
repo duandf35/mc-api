@@ -9,6 +9,11 @@ public class LoginCommand {
     private String username;
     private String password;
 
+    // jackson require a default constructor
+    public LoginCommand() {
+
+    }
+
     public LoginCommand(String username, String password) {
         this.username = username;
         this.password = password;

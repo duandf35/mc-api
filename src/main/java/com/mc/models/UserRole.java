@@ -10,5 +10,7 @@ public enum UserRole {
 
     AGENT,
 
-    CUSTOM
+    CUSTOM,
+
+    REFRESH
 }

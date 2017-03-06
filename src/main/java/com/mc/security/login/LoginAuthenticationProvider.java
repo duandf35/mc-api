@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,12 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginAuthenticationProvider implements AuthenticationProvider {
 
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public LoginAuthenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        this.passwordEncoder = passwordEncoder;
+    public LoginAuthenticationProvider(BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDetailsService = userDetailsService;
     }
 
@@ -38,12 +38,15 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        String username = (String) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
+        // this provider is expecting an UsernamePasswordAuthenticationToken object
+        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) authentication;
+
+        String username = (String) authenticationToken.getPrincipal();
+        String password = (String) authenticationToken.getCredentials();
 
         UserDetails user = userDetailsService.loadUserByUsername(username);
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Password not valid");
         }
 
@@ -54,8 +57,14 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(username, password, user.getAuthorities());
     }
 
+    /**
+     * This support method will determine if this provider should be applied.
+     *
+     * @param authentication
+     * @return true if the passing Authentication object matches the expected type
+     */
     @Override
     public boolean supports(Class<?> authentication) {
-        return true;
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

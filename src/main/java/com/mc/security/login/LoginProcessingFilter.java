@@ -2,7 +2,6 @@ package com.mc.security.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,9 +29,9 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final AuthenticationSuccessHandler successHandler;
+
     private final AuthenticationFailureHandler failureHandler;
 
-    @Autowired
     public LoginProcessingFilter(String defaultProcessUrl, AuthenticationSuccessHandler successHandler, AuthenticationFailureHandler failureHandler) {
         super(defaultProcessUrl);
         this.successHandler = successHandler;
@@ -89,15 +88,25 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
         failureHandler.onAuthenticationFailure(request, response, failed);
     }
 
-    private boolean validate(HttpServletRequest request) {
+    private static boolean validate(HttpServletRequest request) {
         boolean isSupport = true;
 
         // only allow POST method
         isSupport = HttpMethod.POST.name().equals(request.getMethod());
 
         // only allow Ajax request
-        isSupport &= request.getHeader("X-Requested-With") != null;
+        isSupport &= isAjax(request);
 
         return isSupport;
+    }
+
+    // http://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
+    // | Without CORS it is not possible to add X-Requested-With to a cross domain XHR request.
+    private static final String AJAX_HEADER_KEY = "X-Requested-With";
+
+    private static final String AJAX_HEADER_VALUE = "XMLHttpRequest";
+
+    private static boolean isAjax(HttpServletRequest request) {
+        return request.getHeader(AJAX_HEADER_KEY).contains(AJAX_HEADER_VALUE);
     }
 }
