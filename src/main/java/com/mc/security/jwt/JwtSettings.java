@@ -1,4 +1,4 @@
-package com.mc.security.token;
+package com.mc.security.jwt;
 
 /**
  * @author Wenyu
@@ -9,8 +9,6 @@ public class JwtSettings {
     public static final String CLAIMS_SCOPE = "scopes";
 
     public static final String ISSUER = "mc";
-
-    public static final String HEADER_PREFIX = "Bearer";
 
     public static final int ACCESS_EXPIRATION_MIN = 30;
 

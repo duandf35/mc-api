@@ -1,4 +1,4 @@
-package com.mc.models;
+package com.mc.account.models;
 
 /**
  * @author Wenyu

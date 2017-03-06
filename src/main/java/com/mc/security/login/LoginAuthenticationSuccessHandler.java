@@ -1,15 +1,15 @@
 package com.mc.security.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mc.security.token.JwtToken;
-import com.mc.security.token.JwtTokenFactory;
+import com.mc.security.jwt.token.JwtAccessToken;
+import com.mc.security.jwt.token.JwtRefreshToken;
+import com.mc.security.jwt.token.JwtTokenFactory;
 import com.mc.security.user.DbUserAuthority;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -51,12 +51,12 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         String username = (String) authentication.getPrincipal();
         Collection<DbUserAuthority> authorities = (Collection<DbUserAuthority>) authentication.getAuthorities();
 
-        JwtToken accessToken = jwtTokenFactory.createAccessToken(username, authorities);
-        JwtToken refreshToken = jwtTokenFactory.createRefreshToken(username);
+        JwtAccessToken accessToken = jwtTokenFactory.createAccessToken(username, authorities);
+        JwtRefreshToken refreshToken = jwtTokenFactory.createRefreshToken(username);
 
         Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put(TOKEN, accessToken.getToken());
-        tokenMap.put(REFRESH_TOKEN, refreshToken.getToken());
+        tokenMap.put(TOKEN, accessToken.value());
+        tokenMap.put(REFRESH_TOKEN, refreshToken.value());
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // json string

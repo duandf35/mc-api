@@ -10,6 +10,12 @@ public final class WebUtils {
 
     public static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
 
+    public static final String JWT_TOKEN_HEADER_PREFIX = "Bearer-";
+
+    public static final String AUTH_USERNAME_KEY = "username";
+
+    public static final String AUTH_PASSWORD_KEY = "password";
+
     // http://stackoverflow.com/questions/17478731/whats-the-point-of-the-x-requested-with-header
     // | Without CORS it is not possible to add X-Requested-With to a cross domain XHR request.
     private static final String AJAX_HEADER_KEY = "X-Requested-With";

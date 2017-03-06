@@ -1,6 +1,7 @@
-package com.mc.security.token;
+package com.mc.security.jwt;
 
 import static com.mc.security.utils.WebUtils.JWT_TOKEN_HEADER_PARAM;
+import static com.mc.security.utils.WebUtils.JWT_TOKEN_HEADER_PREFIX;
 
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -36,7 +37,7 @@ public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticati
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException
     {
-        String rawJwtToken = extractTokenFromHeader(request.getHeader(JWT_TOKEN_HEADER_PARAM));
+        String rawJwtToken = extractTokenFromHeader(request);
 
         // invoke authentication provider
         return getAuthenticationManager().authenticate(new JwtAuthenticationToken(rawJwtToken));
@@ -64,11 +65,13 @@ public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticati
         failureHandler.onAuthenticationFailure(request, response, failed);
     }
 
-    private static String extractTokenFromHeader(String header) {
-        if (StringUtils.isEmpty(header) || header.length() < JwtSettings.HEADER_PREFIX.length()) {
+    private static String extractTokenFromHeader(HttpServletRequest request) {
+        String jwtTokenHeader = request.getHeader(JWT_TOKEN_HEADER_PARAM);
+
+        if (StringUtils.isEmpty(jwtTokenHeader) || jwtTokenHeader.length() < JWT_TOKEN_HEADER_PREFIX.length()) {
             throw new AuthenticationServiceException("Authorization header is invalid");
         }
 
-        return header.substring(JwtSettings.HEADER_PREFIX.length(), header.length());
+        return jwtTokenHeader.substring(JWT_TOKEN_HEADER_PREFIX.length(), jwtTokenHeader.length());
     }
 }

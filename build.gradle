@@ -20,7 +20,7 @@ dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '6.+'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.+'
 
-    // dependencies for authentication with JSON web token
+    // dependencies for authentication with JWT
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.+'
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.+'
 

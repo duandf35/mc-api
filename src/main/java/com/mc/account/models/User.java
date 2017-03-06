@@ -1,4 +1,4 @@
-package com.mc.models;
+package com.mc.account.models;
 
 import org.hibernate.validator.constraints.Email;
 

@@ -1,7 +1,7 @@
 package com.mc.security.user;
 
-import com.mc.daos.UserDAO;
-import com.mc.models.User;
+import com.mc.account.daos.UserDAO;
+import com.mc.account.models.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

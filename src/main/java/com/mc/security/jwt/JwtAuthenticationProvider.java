@@ -1,6 +1,9 @@
-package com.mc.security.token;
+package com.mc.security.jwt;
 
-import com.mc.models.UserRole;
+import static com.mc.security.jwt.JwtSettings.CLAIMS_SCOPE;
+import static com.mc.security.jwt.JwtSettings.SECRET_KEY;
+
+import com.mc.account.models.UserRole;
 import com.mc.security.user.DbUserAuthority;
 
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,10 +36,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) authentication;
 
         String rawJwtToken = (String) authenticationToken.getCredentials();
-        Jws<Claims> jwsClaims = parseClaims(rawJwtToken, JwtSettings.SECRET_KEY);
+        Jws<Claims> jwsClaims = parseClaims(rawJwtToken, SECRET_KEY);
 
         String subject = jwsClaims.getBody().getSubject();
-        List<String> scopes = jwsClaims.getBody().get(JwtSettings.CLAIMS_SCOPE, List.class);
+        List<String> scopes = jwsClaims.getBody().get(CLAIMS_SCOPE, List.class);
         List<DbUserAuthority> authorities = scopes.stream()
                 .map(authority -> new DbUserAuthority(UserRole.valueOf(authority)))
                 .collect(Collectors.toList());
@@ -61,8 +64,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
             throw new BadCredentialsException("Invalid JWT token", e);
         } catch (ExpiredJwtException e) {
-            throw e; // just indicate that token may be expired
+            throw new BadCredentialsException("Expired JWT token", e);
         }
     }
-
 }

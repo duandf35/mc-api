@@ -4,9 +4,9 @@ import com.mc.security.login.LoginAuthenticationFailureHandler;
 import com.mc.security.login.LoginAuthenticationProvider;
 import com.mc.security.login.LoginAuthenticationSuccessHandler;
 import com.mc.security.login.LoginProcessingFilter;
-import com.mc.security.token.JwtAuthenticationProvider;
-import com.mc.security.token.JwtAuthenticationRequestMatcher;
-import com.mc.security.token.JwtTokenAuthenticationProcessingFilter;
+import com.mc.security.jwt.JwtAuthenticationProvider;
+import com.mc.security.jwt.JwtAuthenticationRequestMatcher;
+import com.mc.security.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.mc.security.user.DbUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +122,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated()
                 .and()
+                // although the UsernamePasswordAuthenticationFilter is added only when formLogin() is called,
+                // it's ok to add custom filters before the UsernamePasswordAuthenticationFilter because
+                // each build-in filter has fixed order defined in the FilterComparator
                 .addFilterBefore(loginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
     }

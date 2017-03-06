@@ -1,6 +1,6 @@
 package com.mc.security.user;
 
-import com.mc.models.UserRole;
+import com.mc.account.models.UserRole;
 
 import org.springframework.security.core.GrantedAuthority;
 

@@ -1,5 +1,8 @@
 package com.mc.security.login;
 
+import static com.mc.security.utils.WebUtils.AUTH_PASSWORD_KEY;
+import static com.mc.security.utils.WebUtils.AUTH_USERNAME_KEY;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mc.security.utils.WebUtils;
 
@@ -61,14 +64,15 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
             throw new AuthenticationServiceException("Authentication method not support");
         }
 
-        LoginCommand loginCommand = objectMapper.readValue(request.getReader(), LoginCommand.class);
+        String username = request.getParameter(AUTH_USERNAME_KEY);
+        String password = request.getParameter(AUTH_PASSWORD_KEY);
 
-        if (StringUtils.isEmpty(loginCommand.getUsername()) || StringUtils.isEmpty(loginCommand.getPassword())) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             throw new AuthenticationServiceException("Username or Password is empty");
         }
 
         // only assign the username and password, the authenticate flag remains false
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginCommand.getUsername(), loginCommand.getPassword());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
 
         // invoke authentication provider
         return this.getAuthenticationManager().authenticate(token);

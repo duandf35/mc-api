@@ -1,6 +1,6 @@
-package com.mc.daos;
+package com.mc.account.daos;
 
-import com.mc.models.User;
+import com.mc.account.models.User;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;

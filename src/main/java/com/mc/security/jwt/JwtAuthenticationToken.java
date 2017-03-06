@@ -1,9 +1,8 @@
-package com.mc.security.token;
+package com.mc.security.jwt;
 
 import com.mc.security.user.DbUserAuthority;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
