@@ -1,5 +1,8 @@
 package com.mc.security.login;
 
+import com.mc.security.user.DbUserDetails;
+import com.mc.security.user.DbUserDetailsService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -7,8 +10,6 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +21,12 @@ import org.springframework.stereotype.Component;
 public class LoginAuthenticationProvider implements AuthenticationProvider {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserDetailsService userDetailsService;
+    private final DbUserDetailsService dbUserDetailsService;
 
     @Autowired
-    public LoginAuthenticationProvider(BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService) {
+    public LoginAuthenticationProvider(BCryptPasswordEncoder bCryptPasswordEncoder, DbUserDetailsService dbUserDetailsService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userDetailsService = userDetailsService;
+        this.dbUserDetailsService = dbUserDetailsService;
     }
 
     /**
@@ -44,7 +45,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
         String username = (String) authenticationToken.getPrincipal();
         String password = (String) authenticationToken.getCredentials();
 
-        UserDetails user = userDetailsService.loadUserByUsername(username);
+        DbUserDetails user = dbUserDetailsService.loadUserByUsername(username);
 
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Password not valid");
@@ -54,7 +55,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
             throw new InsufficientAuthenticationException("User: " + username + " has no role assigned");
         }
 
-        return new UsernamePasswordAuthenticationToken(username, password, user.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
     }
 
     /**

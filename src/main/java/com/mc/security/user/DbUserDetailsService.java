@@ -27,7 +27,7 @@ public class DbUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public DbUserDetails loadUserByUsername(String username) {
         User user = userDAO.findByUsername(username);
 
         if (user == null) {

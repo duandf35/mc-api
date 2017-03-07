@@ -2,7 +2,6 @@ package com.mc.security.user;
 
 import com.mc.account.models.User;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -21,7 +20,7 @@ public class DbUserDetails implements UserDetails {
     }
 
     @Override
-    public Collection<GrantedAuthority> getAuthorities() {
+    public Collection<DbUserAuthority> getAuthorities() {
         return Collections.singletonList(new DbUserAuthority(user.getRole()));
     }
 
@@ -53,5 +52,9 @@ public class DbUserDetails implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

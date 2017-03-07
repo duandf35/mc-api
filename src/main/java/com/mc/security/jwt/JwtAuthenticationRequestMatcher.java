@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationRequestMatcher implements RequestMatcher {
 
     private OrRequestMatcher skippingMatcher;
-
     private RequestMatcher processingMatcher;
 
     public JwtAuthenticationRequestMatcher(List<String> pathToSkip, String processingPath) {

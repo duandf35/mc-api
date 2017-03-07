@@ -1,13 +1,13 @@
 package com.mc.security.jwt;
 
-import static com.mc.security.jwt.JwtSettings.CLAIMS_SCOPE;
-import static com.mc.security.jwt.JwtSettings.SECRET_KEY;
+import static com.mc.security.utils.WebUtils.JWT_CLAIMS_SCOPE;
+import static com.mc.security.utils.WebUtils.JWT_SECRET_KEY;
 
 import com.mc.account.models.UserRole;
 import com.mc.security.user.DbUserAuthority;
+import com.mc.security.utils.WebUtils;
 
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -16,11 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 
 /**
  * @author Wenyu
@@ -36,10 +32,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) authentication;
 
         String rawJwtToken = (String) authenticationToken.getCredentials();
-        Jws<Claims> jwsClaims = parseClaims(rawJwtToken, SECRET_KEY);
+        Jws<Claims> jwsClaims = WebUtils.parseClaims(rawJwtToken, JWT_SECRET_KEY);
 
         String subject = jwsClaims.getBody().getSubject();
-        List<String> scopes = jwsClaims.getBody().get(CLAIMS_SCOPE, List.class);
+        List<String> scopes = jwsClaims.getBody().get(JWT_CLAIMS_SCOPE, List.class);
         List<DbUserAuthority> authorities = scopes.stream()
                 .map(authority -> new DbUserAuthority(UserRole.valueOf(authority)))
                 .collect(Collectors.toList());
@@ -56,15 +52,5 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
         return JwtAuthenticationToken.class.isAssignableFrom(authentication);
-    }
-
-    private static Jws<Claims> parseClaims(String rawJwtToken, String jwtSecret) {
-        try {
-            return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(rawJwtToken);
-        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
-            throw new BadCredentialsException("Invalid JWT token", e);
-        } catch (ExpiredJwtException e) {
-            throw new BadCredentialsException("Expired JWT token", e);
-        }
     }
 }

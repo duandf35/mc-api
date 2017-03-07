@@ -1,10 +1,14 @@
 package com.mc.security.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mc.account.models.User;
+import com.mc.security.jwt.refresh.RefreshTokenBlacklist;
+import com.mc.security.jwt.refresh.RefreshTokenBlacklistDAO;
 import com.mc.security.jwt.token.JwtAccessToken;
 import com.mc.security.jwt.token.JwtRefreshToken;
 import com.mc.security.jwt.token.JwtTokenFactory;
 import com.mc.security.user.DbUserAuthority;
+import com.mc.security.user.DbUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +25,6 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,15 +34,14 @@ import java.util.Map;
 @Component
 public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final String TOKEN = "token";
-    private static final String REFRESH_TOKEN = "refreshToken";
-
     private final ObjectMapper mapper = new ObjectMapper();
     private final JwtTokenFactory jwtTokenFactory;
+    private final RefreshTokenBlacklistDAO refreshTokenBlacklistDAO;
 
     @Autowired
-    public LoginAuthenticationSuccessHandler(JwtTokenFactory jwtTokenFactory) {
+    public LoginAuthenticationSuccessHandler(JwtTokenFactory jwtTokenFactory, RefreshTokenBlacklistDAO refreshTokenBlacklistDAO) {
         this.jwtTokenFactory = jwtTokenFactory;
+        this.refreshTokenBlacklistDAO = refreshTokenBlacklistDAO;
     }
 
     @Override
@@ -48,21 +50,25 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
     {
         // Note: the authentication object here suppose to be the UsernamePasswordAuthenticationToken
         // which is created in the LoginAuthenticationProvider
-        String username = (String) authentication.getPrincipal();
+        DbUserDetails dbUserDetails = (DbUserDetails) authentication.getPrincipal();
         Collection<DbUserAuthority> authorities = (Collection<DbUserAuthority>) authentication.getAuthorities();
+
+        String username = dbUserDetails.getUsername();
 
         JwtAccessToken accessToken = jwtTokenFactory.createAccessToken(username, authorities);
         JwtRefreshToken refreshToken = jwtTokenFactory.createRefreshToken(username);
 
-        Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put(TOKEN, accessToken.value());
-        tokenMap.put(REFRESH_TOKEN, refreshToken.value());
+        Map<String, String> tokenMap = new JwtTokenFactory.TokenMapBuilder()
+                .with(accessToken)
+                .with(refreshToken)
+                .build();
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // json string
         mapper.writeValue(response.getWriter(), tokenMap);
 
         clearAuthenticationAttributes(request);
+        clearRefreshTokenBlacklist(dbUserDetails.getUser());
     }
 
     /**
@@ -76,6 +82,14 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         if (session != null) {
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+        }
+    }
+
+    private void clearRefreshTokenBlacklist(User user) {
+        RefreshTokenBlacklist refreshTokenBlacklist = refreshTokenBlacklistDAO.findByUser(user);
+
+        if (refreshTokenBlacklist != null) {
+            refreshTokenBlacklistDAO.delete(refreshTokenBlacklist);
         }
     }
 }

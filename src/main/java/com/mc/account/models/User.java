@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Wenyu
@@ -42,6 +43,9 @@ public class User {
     @DateTimeFormat
     @NotNull
     private Date dateCreated;
+
+    @NotNull
+    private String externalId = UUID.randomUUID().toString();
 
     public User() {
 
@@ -93,5 +97,21 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Date getDateCreated() {
+        return this.dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getExternalId() {
+        return this.externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 }

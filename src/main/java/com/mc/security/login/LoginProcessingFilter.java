@@ -3,7 +3,6 @@ package com.mc.security.login;
 import static com.mc.security.utils.WebUtils.AUTH_PASSWORD_KEY;
 import static com.mc.security.utils.WebUtils.AUTH_USERNAME_KEY;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mc.security.utils.WebUtils;
 
 import org.springframework.http.HttpMethod;
@@ -30,10 +29,7 @@ import java.io.IOException;
  */
 public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private final AuthenticationSuccessHandler successHandler;
-
     private final AuthenticationFailureHandler failureHandler;
 
     public LoginProcessingFilter(String defaultProcessUrl, AuthenticationSuccessHandler successHandler, AuthenticationFailureHandler failureHandler) {

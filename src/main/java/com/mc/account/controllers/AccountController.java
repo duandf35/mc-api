@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     @RequestMapping("/api/ok")
-    String isOk() {
+    public String isOk() {
         return "OK";
     }
 }

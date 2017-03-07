@@ -1,4 +1,4 @@
-package com.mc.security.jwt.verify;
+package com.mc.security.jwt.refresh;
 
 import com.mc.account.models.User;
 
