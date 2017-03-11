@@ -55,6 +55,19 @@ public final class WebUtils {
 
     private static final String JWT_TOKEN_HEADER_PREFIX = "Bearer-";
 
+    /**
+     * Extract JWT token from request header.
+     *
+     * Never send authentication token via cookies. The attacker can send request from any domain,
+     * although the attacker can not access your cookies due to the domain is different, the browser
+     * will still INCLUDE all your cookies in the request!
+     *
+     * The token should always be sent via the header since only the JS on your domain can access the
+     * cookie (read token from the cookie and put it into the request header)!
+     *
+     * @param request
+     * @return
+     */
     public static String extractTokenFromHeader(HttpServletRequest request) {
         String jwtTokenHeader = request.getHeader(JWT_TOKEN_HEADER_PARAM);
 

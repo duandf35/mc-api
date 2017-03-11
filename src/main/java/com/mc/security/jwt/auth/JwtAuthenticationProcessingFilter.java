@@ -1,4 +1,4 @@
-package com.mc.security.jwt;
+package com.mc.security.jwt.auth;
 
 import com.mc.security.utils.WebUtils;
 

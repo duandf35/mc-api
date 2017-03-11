@@ -1,4 +1,4 @@
-package com.mc.security.jwt;
+package com.mc.security.jwt.auth;
 
 import static com.mc.security.utils.WebUtils.JWT_CLAIMS_SCOPE;
 import static com.mc.security.utils.WebUtils.JWT_SECRET_KEY;

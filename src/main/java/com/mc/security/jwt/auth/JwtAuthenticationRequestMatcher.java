@@ -1,4 +1,4 @@
-package com.mc.security.jwt;
+package com.mc.security.jwt.auth;
 
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;

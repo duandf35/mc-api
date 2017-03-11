@@ -1,8 +1,10 @@
-package com.mc.security.jwt.refresh;
+package com.mc.security.jwt.controllers;
 
 import static com.mc.security.utils.WebUtils.JWT_SECRET_KEY;
 
 import com.mc.config.WebSecurityConfig;
+import com.mc.security.jwt.blacklist.JwtRevokedTokenDAO;
+import com.mc.security.jwt.blacklist.JwtTokenVerifier;
 import com.mc.security.jwt.token.JwtAccessToken;
 import com.mc.security.jwt.token.JwtTokenFactory;
 import com.mc.security.user.DbUserDetails;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Date;
 import java.util.Map;
 
 import io.jsonwebtoken.Claims;
@@ -33,17 +34,15 @@ import io.jsonwebtoken.Jws;
 @RestController
 public class JwtTokenRefreshingController {
 
-    private final RefreshTokenVerifier refreshTokenVerifier;
+    private final JwtTokenVerifier jwtTokenVerifier;
     private final DbUserDetailsService dbUserDetailsService;
     private final JwtTokenFactory jwtTokenFactory;
-    private final RefreshTokenBlacklistDAO refreshTokenBlacklistDAO;
 
     @Autowired
-    public JwtTokenRefreshingController(RefreshTokenVerifier refreshTokenVerifier, DbUserDetailsService dbUserDetailsService, JwtTokenFactory jwtTokenFactory, RefreshTokenBlacklistDAO refreshTokenBlacklistDAO) {
-        this.refreshTokenVerifier = refreshTokenVerifier;
+    public JwtTokenRefreshingController(JwtTokenVerifier jwtTokenVerifier, DbUserDetailsService dbUserDetailsService, JwtTokenFactory jwtTokenFactory) {
+        this.jwtTokenVerifier = jwtTokenVerifier;
         this.dbUserDetailsService = dbUserDetailsService;
         this.jwtTokenFactory = jwtTokenFactory;
-        this.refreshTokenBlacklistDAO = refreshTokenBlacklistDAO;
     }
 
     // Any exception will be caught by the default global exception handle
@@ -58,14 +57,7 @@ public class JwtTokenRefreshingController {
         DbUserDetails userDetails = dbUserDetailsService.loadUserByUsername(username);
 
         // validation failure will cause exception be thrown
-        refreshTokenVerifier.validate(claims);
-
-        // add current refresh token into blacklist
-        RefreshTokenBlacklist refreshTokenBlacklist = new RefreshTokenBlacklist();
-        refreshTokenBlacklist.setDateCreated(new Date());
-        refreshTokenBlacklist.setJti(claims.getBody().getId());
-        refreshTokenBlacklist.setUser(userDetails.getUser());
-        refreshTokenBlacklistDAO.save(refreshTokenBlacklist);
+        jwtTokenVerifier.validate(claims);
 
         JwtAccessToken accessToken = jwtTokenFactory.createAccessToken(username, userDetails.getAuthorities());
 

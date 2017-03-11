@@ -42,7 +42,8 @@ public class JwtTokenFactory {
         }
 
         Claims claims = Jwts.claims()
-                .setSubject(username);
+                .setSubject(username)
+                .setId(UUID.randomUUID().toString());
         claims.put(JWT_CLAIMS_SCOPE, authorities.stream()
                 .map(DbUserAuthority::getAuthority)
                 .collect(Collectors.toList()));
@@ -66,7 +67,7 @@ public class JwtTokenFactory {
     /**
      * Refresh jwt which has a longer expiration for re-building access jwt.
      *
-     * The refresh jwt doesn't contain the user authorities.
+     * The blacklist jwt doesn't contain the user authorities.
      *
      * @param username
      * @return

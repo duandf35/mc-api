@@ -1,4 +1,4 @@
-package com.mc.security.jwt.refresh;
+package com.mc.security.jwt.blacklist;
 
 import com.mc.account.models.User;
 
@@ -7,15 +7,17 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 
+import java.util.Set;
+
 /**
  * @author Wenyu
  * @since 3/6/17
  */
 @Component
 @Transactional
-public interface RefreshTokenBlacklistDAO extends CrudRepository<RefreshTokenBlacklist, Long> {
+public interface JwtRevokedTokenDAO extends CrudRepository<JwtRevokedToken, Long> {
 
-    RefreshTokenBlacklist findByJti(String jti);
+    JwtRevokedToken findByJti(String jti);
 
-    RefreshTokenBlacklist findByUser(User user);
+    Set<JwtRevokedToken> findByUser(User user);
 }

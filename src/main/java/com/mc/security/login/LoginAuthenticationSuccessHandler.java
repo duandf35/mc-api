@@ -2,8 +2,8 @@ package com.mc.security.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mc.account.models.User;
-import com.mc.security.jwt.refresh.RefreshTokenBlacklist;
-import com.mc.security.jwt.refresh.RefreshTokenBlacklistDAO;
+import com.mc.security.jwt.blacklist.JwtRevokedToken;
+import com.mc.security.jwt.blacklist.JwtRevokedTokenDAO;
 import com.mc.security.jwt.token.JwtAccessToken;
 import com.mc.security.jwt.token.JwtRefreshToken;
 import com.mc.security.jwt.token.JwtTokenFactory;
@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Wenyu
@@ -36,12 +37,12 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final JwtTokenFactory jwtTokenFactory;
-    private final RefreshTokenBlacklistDAO refreshTokenBlacklistDAO;
+    private final JwtRevokedTokenDAO jwtRevokedTokenDAO;
 
     @Autowired
-    public LoginAuthenticationSuccessHandler(JwtTokenFactory jwtTokenFactory, RefreshTokenBlacklistDAO refreshTokenBlacklistDAO) {
+    public LoginAuthenticationSuccessHandler(JwtTokenFactory jwtTokenFactory, JwtRevokedTokenDAO jwtRevokedTokenDAO) {
         this.jwtTokenFactory = jwtTokenFactory;
-        this.refreshTokenBlacklistDAO = refreshTokenBlacklistDAO;
+        this.jwtRevokedTokenDAO = jwtRevokedTokenDAO;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         mapper.writeValue(response.getWriter(), tokenMap);
 
         clearAuthenticationAttributes(request);
-        clearRefreshTokenBlacklist(dbUserDetails.getUser());
+        clearRevokedTokens(dbUserDetails.getUser());
     }
 
     /**
@@ -85,11 +86,11 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         }
     }
 
-    private void clearRefreshTokenBlacklist(User user) {
-        RefreshTokenBlacklist refreshTokenBlacklist = refreshTokenBlacklistDAO.findByUser(user);
+    private void clearRevokedTokens(User user) {
+        Set<JwtRevokedToken> jwtRevokedTokens = jwtRevokedTokenDAO.findByUser(user);
 
-        if (refreshTokenBlacklist != null) {
-            refreshTokenBlacklistDAO.delete(refreshTokenBlacklist);
+        if (jwtRevokedTokens != null && !jwtRevokedTokens.isEmpty()) {
+            jwtRevokedTokenDAO.delete(jwtRevokedTokens);
         }
     }
 }

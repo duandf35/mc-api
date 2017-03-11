@@ -1,14 +1,14 @@
-package com.mc.security.jwt.refresh;
+package com.mc.security.jwt.blacklist;
 
 import com.mc.account.models.User;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import java.util.Date;
@@ -17,8 +17,8 @@ import java.util.Date;
  * @author Wenyu
  * @since 3/6/17
  */
-@Entity(name = "refresh_token_blacklist")
-public class RefreshTokenBlacklist {
+@Entity(name = "jwt_revoked_token")
+public class JwtRevokedToken {
 
     @Id
     @GeneratedValue
@@ -31,11 +31,12 @@ public class RefreshTokenBlacklist {
     @NotNull
     private Date dateCreated;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     @NotNull
     private User user;
 
-    public RefreshTokenBlacklist() {
+    public JwtRevokedToken() {
 
     }
 

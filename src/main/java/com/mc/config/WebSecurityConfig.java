@@ -4,9 +4,9 @@ import com.mc.security.login.LoginAuthenticationFailureHandler;
 import com.mc.security.login.LoginAuthenticationProvider;
 import com.mc.security.login.LoginAuthenticationSuccessHandler;
 import com.mc.security.login.LoginProcessingFilter;
-import com.mc.security.jwt.JwtAuthenticationProvider;
-import com.mc.security.jwt.JwtAuthenticationRequestMatcher;
-import com.mc.security.jwt.JwtAuthenticationProcessingFilter;
+import com.mc.security.jwt.auth.JwtAuthenticationProvider;
+import com.mc.security.jwt.auth.JwtAuthenticationRequestMatcher;
+import com.mc.security.jwt.auth.JwtAuthenticationProcessingFilter;
 import com.mc.security.user.DbUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login";
     public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
-    public static final String TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token";
+    public static final String TOKEN_REFRESH_ENTRY_POINT = "/api/auth/refresh";
+    public static final String TOKEN_REVOKE_ENTRY_POINT = "/api/auth/revoke";
 
     private final LoginAuthenticationProvider loginAuthenticationProvider;
     private final LoginAuthenticationSuccessHandler loginAuthenticationSuccessHandler;
@@ -82,7 +83,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     protected JwtAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
-        List<String> pathToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
+        List<String> pathToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, TOKEN_REVOKE_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
         JwtAuthenticationRequestMatcher requestMatcher = new JwtAuthenticationRequestMatcher(pathToSkip, TOKEN_BASED_AUTH_ENTRY_POINT);
 
         JwtAuthenticationProcessingFilter filter = new JwtAuthenticationProcessingFilter(loginAuthenticationFailureHandler, requestMatcher);
@@ -112,6 +113,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll()
                 .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll()
+                .antMatchers(TOKEN_REVOKE_ENTRY_POINT).permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated()
