@@ -53,7 +53,7 @@ public final class WebUtils {
 
     private static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
 
-    private static final String JWT_TOKEN_HEADER_PREFIX = "Bearer-";
+    private static final String JWT_TOKEN_HEADER_PREFIX = "Bearer ";
 
     /**
      * Extract JWT token from request header.
